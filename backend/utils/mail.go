@@ -46,7 +46,7 @@ func SendVerificationMail(user *models.User) error {
 	var body bytes.Buffer
 
 	mimeHeaders := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
-	body.Write([]byte(fmt.Sprintf("Subject: Daily-Expenses-App Email Verification\n%s\n\n", mimeHeaders)))
+	body.Write([]byte(fmt.Sprintf("Subject: Hermes Backend Auth\n%s\n\n", mimeHeaders)))
 	
 	templ.Execute(&body, struct {
 		Username string

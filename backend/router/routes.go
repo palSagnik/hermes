@@ -20,6 +20,4 @@ func SetUpRoutes(app *fiber.App) {
 	// hence a token is used to access the api calls such as userdetails, expenses
 	api := app.Group("/api", middleware.VerifyToken())
 	api.Get("/users", handler.GetUsers)
-	api.Post("/expense/add", handler.AddExpense)
-	// api.Get("")
 }

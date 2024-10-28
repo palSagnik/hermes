@@ -21,12 +21,11 @@ func Signup(c *fiber.Ctx) error {
 	// assigning form values
 	signup.Email = c.FormValue("email")
 	signup.Name = c.FormValue("name")
-	signup.Number = c.FormValue("number")
 	signup.Password = c.FormValue("password")
 	signup.ConfirmPass = c.FormValue("confirm")
 
 	// handling error if any of the fields are empty
-	if signup.Email == "" || signup.Name == ""|| signup.Number == "" || signup.Password == "" || signup.ConfirmPass == "" {
+	if signup.Email == "" || signup.Name == "" || signup.Password == "" || signup.ConfirmPass == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status":"failed", "message":"all fields must be filled"})
 	}
 

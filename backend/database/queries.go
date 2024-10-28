@@ -23,8 +23,8 @@ func AddUserToVerify(c *fiber.Ctx, user *models.User) error {
 	}
 	
 	// adding user to verification table
-	query = `INSERT INTO verifications (email, name, number, password, created_at) VALUES ($1, $2, $3, $4, $5);`
-	_, err = DB.Exec(query, user.Email, user.Name, user.Number, user.Password, time.Now())
+	query = `INSERT INTO verifications (email, name, password, created_at) VALUES ($1, $2, $3, $4);`
+	_, err = DB.Exec(query, user.Email, user.Name, user.Password, time.Now())
 	if err != nil {
 		log.Warn(err)
 		return err
@@ -65,16 +65,16 @@ func AddUser(c *fiber.Ctx, email string) (string, error) {
 	// email does not exist in the user table hence fetch from verification table
 	var verifiedUser models.Verification
 
-	query := `SELECT email, name, number, password FROM verifications WHERE email=$1`
+	query := `SELECT email, name, password FROM verifications WHERE email=$1`
 	row := DB.QueryRow(query, email)
-	if err := row.Scan(&verifiedUser.Email, &verifiedUser.Name, &verifiedUser.Number, &verifiedUser.Password); err != nil {
+	if err := row.Scan(&verifiedUser.Email, &verifiedUser.Name, &verifiedUser.Password); err != nil {
 		log.Warn(err)
 		return  err.Error(), err
 	}
 
 	// creating user
-	query = `INSERT INTO users (email, name, number, password) VALUES ($1, $2, $3, $4);`
-	_, err = DB.Exec(query, verifiedUser.Email, verifiedUser.Name, verifiedUser.Number, verifiedUser.Password)
+	query = `INSERT INTO users (email, name, password) VALUES ($1, $2, $3);`
+	_, err = DB.Exec(query, verifiedUser.Email, verifiedUser.Name, verifiedUser.Password)
 	if err != nil {
 		log.Warn(err)
 		return err.Error(), err
@@ -96,9 +96,9 @@ func GetUserDetails (c *fiber.Ctx, userid int) (*models.User, error) {
 	var user models.User
 	
 	log.Infof("fetching user details of userid '%d'", userid)
-	query := `SELECT email, name, number FROM users WHERE user_id=$1`
+	query := `SELECT email, name FROM users WHERE user_id=$1`
 	row := DB.QueryRow(query, userid)
-	switch err := row.Scan(&user.Email, &user.Name, &user.Number); err {
+	switch err := row.Scan(&user.Email, &user.Name); err {
 	case sql.ErrNoRows:
 		return nil, sql.ErrNoRows
 	case nil:
@@ -110,7 +110,7 @@ func GetUserDetails (c *fiber.Ctx, userid int) (*models.User, error) {
 
 func GetUsers (c *fiber.Ctx) ([]*models.UserDetails, error) {
 
-	query := `SELECT user_id, name, email, number FROM users ORDER BY user_id;`
+	query := `SELECT user_id, name, email FROM users ORDER BY user_id;`
 	rows, err := DB.Query(query)
 	if err != nil {
 		return nil, err
@@ -125,7 +125,6 @@ func GetUsers (c *fiber.Ctx) ([]*models.UserDetails, error) {
 			&user.UserID,
 			&user.Name,
 			&user.Email,
-			&user.Number,
 		)
 		if err != nil {
 			return nil, err

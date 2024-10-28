@@ -30,12 +30,6 @@ func VerifySignupInput(signup *models.User) (bool, string) {
 		return false, "your passwords do not match, please try again"
 	}
 
-	// number verification
-	number := signup.Number
-	if len(number) != 10 {
-		return false, "number must be exactly 10 digits long"
-	}
-
 	// name verification
 	name := signup.Name
 	if len(name) > config.NAME_LEN {

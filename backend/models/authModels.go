@@ -11,8 +11,6 @@ type User struct {
 	UserID      int          `json:"userid"`
 	Email       string       `json:"email"           form:"email"`
 	Name        string       `json:"name"            form:"name"`
-	Number      string       `json:"number"          form:"number"`
-	Expenses  	[]Expense    `json:"expenses"        form:"expenses"`
 	Password    string       `json:"password"        form:"password"`
 	ConfirmPass string       `json:"confirm"         form:"confirm"`
 }
@@ -23,7 +21,6 @@ type Verification struct {
 	VerificationID int       `json:"vid"`
 	Email          string    `json:"email"    form:"email"`
 	Name           string    `json:"name"     form:"name"`
-	Number         string    `json:"number"   form:"number"`
 	Password       string    `json:"password" form:"password"`
 	CreatedAt      time.Time
 }
@@ -32,8 +29,6 @@ type UserDetails struct {
 	UserID      int          `json:"userid"`
 	Email       string       `json:"email"           form:"email"`
 	Name        string       `json:"name"            form:"name"`
-	Number      string       `json:"number"          form:"number"`
-	Expenses  	[]Expense    `json:"expenses"        form:"expenses"`
 }
 
 // struct for credentials

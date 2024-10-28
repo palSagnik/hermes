@@ -30,8 +30,6 @@ func GetUserDetails(c *fiber.Ctx) error {
 	userdetails := &models.UserDetails{
 		Email: user.Email,
 		Name: user.Name,
-		Number: user.Number,
-		Expenses: user.Expenses,
 	}
 
 	return c.Status(fiber.StatusAccepted).JSON(userdetails)
