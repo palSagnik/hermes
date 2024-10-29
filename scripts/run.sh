@@ -1,5 +1,7 @@
 #!/bin/zsh
 
+cd ../backend/
+
 rm test
 
 go mod tidy

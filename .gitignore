@@ -1,0 +1,8 @@
+# environment variables
+.env
+
+# binary
+backend/test
+
+#volumes
+backend/database/pgdata

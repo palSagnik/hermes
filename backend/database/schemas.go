@@ -7,6 +7,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
+
 func createTables(db *sql.DB) error {
 	// Create users table
 	userTable := `

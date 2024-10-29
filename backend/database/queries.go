@@ -88,6 +88,7 @@ func AddUser(c *fiber.Ctx, email string) (string, error) {
 		return err.Error(), err
 	}
 	
+	log.Infof("added user with email '%s' for users", email)
 	return "", nil
 }
 
