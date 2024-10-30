@@ -15,8 +15,8 @@ FROM alpine:latest
 RUN apk --no-cache add ca-certificates
 
 WORKDIR /root/
-COPY --from=builder /app/main .
 RUN mkdir ./template
+COPY --from=builder /app/main .
 COPY --from=builder /app/template/mail.html ./template/mail.html
 COPY --from=builder /app/.env .
 
