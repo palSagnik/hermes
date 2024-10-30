@@ -12,7 +12,6 @@ import (
 	"github.com/palSagnik/daily-expenses-application/models"
 )
 
-
 func getToken(user *models.User) (string, error) {
 	claims := jwt.MapClaims{
 		"email": user.Email,
@@ -24,12 +23,10 @@ func getToken(user *models.User) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	
 	return tokenString, nil
 }
 
 func SendVerificationMail(user *models.User) error {
-
 	token, err := getToken(user)
 	if err != nil {
 		return err

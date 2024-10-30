@@ -32,7 +32,6 @@ func AddUserToVerify(c *fiber.Ctx, user *models.User) error {
 
 	log.Infof("added user with email '%s' for verification", user.Email)
 	return nil
-
 }
 
 // deleting user by email -> unique property

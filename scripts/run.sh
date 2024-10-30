@@ -1,9 +1,7 @@
 #!/bin/zsh
 
-cd ../backend/
-
+cd backend
 rm test
-
 go mod tidy
 
 echo "Building the go-project"
