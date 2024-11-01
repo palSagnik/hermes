@@ -12,7 +12,7 @@ A production-ready authentication service template built with Go, featuring user
 - Email verification
 - Docker containerization
 - RESTful API endpoints
-- Rate limiting
+- Rate limiting by IP
 - Input validation
 
 
@@ -103,6 +103,7 @@ hermes/
 │   ├── database
 │   │   ├── database.go
 │   │   ├── pgdata
+│   │   │   └── global
 │   │   ├── queries.go
 │   │   └── schemas.go
 │   ├── go.mod
@@ -113,7 +114,8 @@ hermes/
 │   │   └── misc.go
 │   ├── main.go
 │   ├── middleware
-│   │   └── middleware.go
+│   │   ├── middleware.go
+│   │   └── ratelimiter.go
 │   ├── models
 │   │   └── authModels.go
 │   ├── router
