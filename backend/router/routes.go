@@ -2,8 +2,8 @@ package router
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/palSagnik/daily-expenses-application/handler"
-	"github.com/palSagnik/daily-expenses-application/middleware"
+	"github.com/palSagnik/hermes/handler"
+	"github.com/palSagnik/hermes/middleware"
 )
 
 func SetUpRoutes(app *fiber.App) {

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/mail"
 
-	"github.com/palSagnik/daily-expenses-application/config"
-	"github.com/palSagnik/daily-expenses-application/models"
+	"github.com/palSagnik/hermes/config"
+	"github.com/palSagnik/hermes/models"
 )
 
 func GenerateHash(secret string) string {
@@ -16,7 +16,7 @@ func GenerateHash(secret string) string {
 }
 
 func VerifySignupInput(signup *models.User) (bool, string) {
-	
+
 	// password verification
 	password := signup.Password
 	confirmPassword := signup.ConfirmPass
@@ -48,9 +48,8 @@ func VerifySignupInput(signup *models.User) (bool, string) {
 		return false, "not a valid email address"
 	}
 
-	return true ,""
+	return true, ""
 }
-
 
 func VerifyLoginInput(creds *models.Credentials) (bool, string) {
 

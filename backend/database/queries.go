@@ -8,12 +8,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 	_ "github.com/lib/pq"
-	"github.com/palSagnik/daily-expenses-application/models"
+	"github.com/palSagnik/hermes/models"
 )
 
 // user queries
 func AddUserToVerify(c *fiber.Ctx, user *models.User) error {
-	
+
 	// deleting any previous record of user
 	query := `DELETE FROM verifications WHERE email = $1;`
 	_, err := DB.Exec(query, user.Email)
@@ -21,7 +21,7 @@ func AddUserToVerify(c *fiber.Ctx, user *models.User) error {
 		log.Warn(err)
 		return err
 	}
-	
+
 	// adding user to verification table
 	query = `INSERT INTO verifications (email, name, password, created_at) VALUES ($1, $2, $3, $4);`
 	_, err = DB.Exec(query, user.Email, user.Name, user.Password, time.Now())
@@ -37,7 +37,7 @@ func AddUserToVerify(c *fiber.Ctx, user *models.User) error {
 // deleting user by email -> unique property
 func DeleteUser(c *fiber.Ctx) error {
 	email := c.Params("email")
-	
+
 	query := `DELETE FROM users WHERE email = $1;`
 	_, err := DB.Exec(query, email)
 	if err != nil {
@@ -48,7 +48,6 @@ func DeleteUser(c *fiber.Ctx) error {
 	log.Infof("deleted user with email '%s'", email)
 	return nil
 }
-
 
 func AddUser(c *fiber.Ctx, email string) (string, error) {
 
@@ -68,7 +67,7 @@ func AddUser(c *fiber.Ctx, email string) (string, error) {
 	row := DB.QueryRow(query, email)
 	if err := row.Scan(&verifiedUser.Email, &verifiedUser.Name, &verifiedUser.Password); err != nil {
 		log.Warn(err)
-		return  err.Error(), err
+		return err.Error(), err
 	}
 
 	// creating user
@@ -86,15 +85,15 @@ func AddUser(c *fiber.Ctx, email string) (string, error) {
 		log.Warn(err)
 		return err.Error(), err
 	}
-	
+
 	log.Infof("added user with email '%s' for users", email)
 	return "", nil
 }
 
 // gettting user details
-func GetUserDetails (c *fiber.Ctx, userid int) (*models.User, error) {
+func GetUserDetails(c *fiber.Ctx, userid int) (*models.User, error) {
 	var user models.User
-	
+
 	log.Infof("fetching user details of userid '%d'", userid)
 	query := `SELECT email, name FROM users WHERE user_id=$1`
 	row := DB.QueryRow(query, userid)
@@ -108,7 +107,7 @@ func GetUserDetails (c *fiber.Ctx, userid int) (*models.User, error) {
 	}
 }
 
-func GetUsers (c *fiber.Ctx) ([]*models.UserDetails, error) {
+func GetUsers(c *fiber.Ctx) ([]*models.UserDetails, error) {
 
 	query := `SELECT user_id, name, email FROM users ORDER BY user_id;`
 	rows, err := DB.Query(query)

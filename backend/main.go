@@ -6,13 +6,17 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/gofiber/fiber/v2/middleware/recover"
-	"github.com/palSagnik/daily-expenses-application/config"
-	"github.com/palSagnik/daily-expenses-application/database"
-	"github.com/palSagnik/daily-expenses-application/router"
+	"github.com/palSagnik/hermes/config"
+	"github.com/palSagnik/hermes/database"
+	"github.com/palSagnik/hermes/middleware"
+	"github.com/palSagnik/hermes/router"
 )
+func init() {
+	go middleware.CleanupVisitors()
+}
 
-func main(){
-	
+func main() {
+
 	// loop till database is initialised
 	for {
 		if err := database.ConnectDB(); err != nil {

@@ -8,15 +8,20 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/palSagnik/daily-expenses-application/config"
-	"github.com/palSagnik/daily-expenses-application/database"
-	"github.com/palSagnik/daily-expenses-application/middleware"
-	"github.com/palSagnik/daily-expenses-application/models"
-	"github.com/palSagnik/daily-expenses-application/utils"
+	"github.com/palSagnik/hermes/config"
+	"github.com/palSagnik/hermes/database"
+	"github.com/palSagnik/hermes/middleware"
+	"github.com/palSagnik/hermes/models"
+	"github.com/palSagnik/hermes/utils"
 )
 
 func Signup(c *fiber.Ctx) error {
 	signup := new(models.User)
+
+	limiter := middleware.GetVisitor(c.IP())
+	if !limiter.Allow() {
+		return c.Status(fiber.StatusTooManyRequests).JSON(fiber.Map{"status": "failed", "message": "too many requests"})
+	}
 
 	// assigning form values
 	signup.Email = c.FormValue("email")
@@ -26,7 +31,7 @@ func Signup(c *fiber.Ctx) error {
 
 	// handling error if any of the fields are empty
 	if signup.Email == "" || signup.Name == "" || signup.Password == "" || signup.ConfirmPass == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status":"failed", "message":"all fields must be filled"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "failed", "message": "all fields must be filled"})
 	}
 
 	// removing extra space in form fields
@@ -41,7 +46,7 @@ func Signup(c *fiber.Ctx) error {
 	// checking whether signup information is valid or not
 	isOk, status := utils.VerifySignupInput(signup)
 	if !isOk {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status":"failed", "message":status})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "failed", "message": status})
 	}
 
 	// Store the hash of the password in the database
@@ -51,20 +56,25 @@ func Signup(c *fiber.Ctx) error {
 	err := database.AddUserToVerify(c, signup)
 	if err != nil {
 		log.Warn(err)
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status":"failed", "message":"please contact admin"})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "failed", "message": "please contact admin"})
 	}
 
 	// send verification mail
 	if err := utils.SendVerificationMail(signup); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status":"failed", "message":"error in sending verification email"})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "failed", "message": "error in sending verification email"})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status":"success", "message":"check your email for verification"})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "message": "check your email for verification"})
 }
 
 func Login(c *fiber.Ctx) error {
 	creds := new(models.Credentials)
 	user := new(models.User)
+
+	limiter := middleware.GetVisitor(c.IP())
+	if !limiter.Allow() {
+		return c.Status(fiber.StatusTooManyRequests).JSON(fiber.Map{"status": "failed", "message": "too many requests"})
+	}
 
 	// form values
 	creds.Email = c.FormValue("email")
@@ -72,7 +82,7 @@ func Login(c *fiber.Ctx) error {
 
 	// empty field checks
 	if creds.Email == "" || creds.Password == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status":"failed", "message":"all fields must be filled"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "failed", "message": "all fields must be filled"})
 	}
 
 	// formatting form fields
@@ -82,7 +92,7 @@ func Login(c *fiber.Ctx) error {
 
 	// verifying login input
 	if isOk, statusMsg := utils.VerifyLoginInput(creds); !isOk {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status":"failed", "message":statusMsg})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "failed", "message": statusMsg})
 	}
 
 	// hashing the password
@@ -112,7 +122,13 @@ func Login(c *fiber.Ctx) error {
 }
 
 // function to verify token
-func Verify(c * fiber.Ctx) error {
+func Verify(c *fiber.Ctx) error {
+	
+	limiter := middleware.GetVisitor(c.IP())
+	if !limiter.Allow() {
+		return c.Status(fiber.StatusTooManyRequests).JSON(fiber.Map{"status": "failed", "message": "too many requests"})
+	}
+	
 	token := c.Query("token")
 	if token == "" {
 		return c.Status(fiber.StatusBadRequest).SendString("missing token! Register again")
@@ -137,9 +153,8 @@ func Verify(c * fiber.Ctx) error {
 
 	if msg, err := database.AddUser(c, claims.Email); err != nil {
 		log.Warn(err)
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status":"failure", "message":msg})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "failure", "message": msg})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "message": "user added! proceed to login"})
 }
-

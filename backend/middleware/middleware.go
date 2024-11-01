@@ -6,16 +6,14 @@ import (
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/palSagnik/daily-expenses-application/config"
-	"github.com/palSagnik/daily-expenses-application/models"
+	"github.com/palSagnik/hermes/config"
+	"github.com/palSagnik/hermes/models"
 )
-
-
 
 func VerifyToken() fiber.Handler {
 	return jwtware.New(jwtware.Config{
 		SigningKey: jwtware.SigningKey{
-			Key: []byte(config.SESSION_SECRET),
+			Key:    []byte(config.SESSION_SECRET),
 			JWTAlg: jwtware.HS256,
 		},
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
@@ -27,7 +25,7 @@ func VerifyToken() fiber.Handler {
 func GenerateToken(user *models.User) (string, error) {
 	claims := jwt.MapClaims{
 		"userid": user.UserID,
-		"email": user.Email,
+		"email":  user.Email,
 		"expiry": time.Now().Add(time.Hour * time.Duration(config.SESSION_EXPIRY)).Unix(),
 	}
 
@@ -36,6 +34,6 @@ func GenerateToken(user *models.User) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	
+
 	return t, nil
 }

@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/palSagnik/daily-expenses-application/config"
-	"github.com/palSagnik/daily-expenses-application/models"
+	"github.com/palSagnik/hermes/config"
+	"github.com/palSagnik/hermes/models"
 )
 
 func getToken(user *models.User) (string, error) {
